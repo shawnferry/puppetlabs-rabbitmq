@@ -1,3 +1,7 @@
+#######################################################################
+# Oracle has modified the originally distributed contents of this file.
+#######################################################################
+
   # Class: rabbitmq::params
 #
 #   The RabbitMQ Module configuration settings.
@@ -59,6 +63,17 @@ class rabbitmq::params {
       $rabbitmq_group   = 'rabbitmq'
       $rabbitmq_home    = '/var/lib/rabbitmq'
       $plugin_dir       = "/usr/lib/rabbitmq/lib/rabbitmq_server-${version}/plugins"
+    }
+    'Solaris': {
+      $package_ensure   = 'installed'
+      $package_name     = 'network/amqp/rabbitmq'
+      $service_name     = 'application/rabbitmq:default'
+      $package_provider = 'pkg'
+      $version          = '3.6.1'
+      $rabbitmq_user    = 'rabbitmq'
+      $rabbitmq_group   = 'daemon'
+      $rabbitmq_home    = '/var/lib/rabbitmq'
+      $plugin_dir       = '/usr/lib/rabbitmq/plugins'
     }
     default: {
       fail("The ${module_name} module is not supported on an ${::osfamily} based system.")
