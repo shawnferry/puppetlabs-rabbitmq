@@ -4,12 +4,12 @@ Puppet::Type.type(:rabbitmq_exchange).provide(:rabbitmqadmin, :parent => Puppet:
 
   if Puppet::PUPPETVERSION.to_f < 3
     commands :rabbitmqctl   => 'rabbitmqctl'
-    commands :rabbitmqadmin => $rabbbitmq::admin_path
+    commands :rabbitmqadmin => 'rabbitmqadmin'
   else
     has_command(:rabbitmqctl, 'rabbitmqctl') do
       environment :HOME => "/tmp"
     end
-    has_command(:rabbitmqadmin, $rabbbitmq::admin_path) do
+    has_command(:rabbitmqadmin, 'rabbitmqadmin') do
       environment :HOME => "/tmp"
     end
   end
