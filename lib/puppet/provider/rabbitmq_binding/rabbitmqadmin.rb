@@ -4,12 +4,12 @@ Puppet::Type.type(:rabbitmq_binding).provide(:rabbitmqadmin) do
 
   if Puppet::PUPPETVERSION.to_f < 3
     commands :rabbitmqctl   => 'rabbitmqctl'
-    commands :rabbitmqadmin => '/usr/local/bin/rabbitmqadmin'
+    commands :rabbitmqadmin => 'rabbitmqadmin'
   else
     has_command(:rabbitmqctl, 'rabbitmqctl') do
       environment :HOME => "/tmp"
     end
-    has_command(:rabbitmqadmin, '/usr/local/bin/rabbitmqadmin') do
+    has_command(:rabbitmqadmin, 'rabbitmqadmin') do
       environment :HOME => "/tmp"
     end
   end
@@ -85,7 +85,8 @@ Puppet::Type.type(:rabbitmq_binding).provide(:rabbitmqadmin) do
     if arguments.nil?
       arguments = {}
     end
-    rabbitmqadmin('declare',
+    rabbitmqadmin(
+      'declare',
       'binding',
       vhost_opt,
       "--user=#{resource[:user]}",

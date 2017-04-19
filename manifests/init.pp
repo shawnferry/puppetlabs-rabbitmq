@@ -1,6 +1,9 @@
 # Main rabbitmq class
 class rabbitmq(
   $admin_enable               = $rabbitmq::params::admin_enable,
+  $admin_owner                = $rabbitmq::params::admin_owner,
+  $admin_group                = $rabbitmq::params::admin_group,
+  $admin_path                 = $rabbitmq::params::admin_path,
   $cluster_node_type          = $rabbitmq::params::cluster_node_type,
   $cluster_nodes              = $rabbitmq::params::cluster_nodes,
   $config                     = $rabbitmq::params::config,
@@ -302,9 +305,25 @@ class rabbitmq(
   anchor { 'rabbitmq::begin': }
   anchor { 'rabbitmq::end': }
 
-  Anchor['rabbitmq::begin'] -> Class['::rabbitmq::install']
-    -> Class['::rabbitmq::config'] ~> Class['::rabbitmq::service']
-    -> Class['::rabbitmq::management'] -> Anchor['rabbitmq::end']
+  case $::osfamily {
+    'Solaris': {
+      file { 'cookie_owner':
+        path  => '/var/lib/rabbitmq/.erlang.cookie',
+        owner => 'rabbitmq',
+        group => 'daemon',
+      }
+
+      Anchor['rabbitmq::begin'] -> Class['::rabbitmq::install']
+        -> File['cookie_owner']
+        -> Class['::rabbitmq::config'] ~> Class['::rabbitmq::service']
+        -> Class['::rabbitmq::management'] -> Anchor['rabbitmq::end']
+    }
+    default: {
+      Anchor['rabbitmq::begin'] -> Class['::rabbitmq::install']
+        -> Class['::rabbitmq::config'] ~> Class['::rabbitmq::service']
+        -> Class['::rabbitmq::management'] -> Anchor['rabbitmq::end']
+    }
+  }
 
   # Make sure the various providers have their requirements in place.
   Class['::rabbitmq::install'] -> Rabbitmq_plugin<| |>

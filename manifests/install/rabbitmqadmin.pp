@@ -1,4 +1,3 @@
-#
 class rabbitmq::install::rabbitmqadmin {
 
   if($rabbitmq::ssl and $rabbitmq::management_ssl) {
@@ -37,9 +36,9 @@ class rabbitmq::install::rabbitmqadmin {
     ],
   }
 
-  file { '/usr/local/bin/rabbitmqadmin':
-    owner   => 'root',
-    group   => '0',
+  file { $rabbbitmq::admin_path:
+    owner   => $rabbbitmq::admin_owner,
+    group   => $rabbbitmq::admin_group,
     source  => "${rabbitmq::rabbitmq_home}/rabbitmqadmin",
     mode    => '0755',
     require => Staging::File['rabbitmqadmin'],

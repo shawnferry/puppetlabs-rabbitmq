@@ -1,4 +1,4 @@
-  # Class: rabbitmq::params
+# Class: rabbitmq::params
 #
 #   The RabbitMQ Module configuration settings.
 #
@@ -60,8 +60,32 @@ class rabbitmq::params {
       $rabbitmq_home    = '/var/lib/rabbitmq'
       $plugin_dir       = "/usr/lib/rabbitmq/lib/rabbitmq_server-${version}/plugins"
     }
+    'Solaris': {
+      $package_ensure   = 'installed'
+      $package_name     = 'network/amqp/rabbitmq'
+      $service_name     = 'application/rabbitmq:default'
+      $package_provider = 'pkg'
+      $version          = '3.6.1'
+      $rabbitmq_user    = 'rabbitmq'
+      $rabbitmq_group   = 'daemon'
+      $rabbitmq_home    = '/var/lib/rabbitmq'
+      $plugin_dir       = '/usr/lib/rabbitmq/plugins'
+    }
     default: {
       fail("The ${module_name} module is not supported on an ${::osfamily} based system.")
+    }
+  }
+
+  case $::osfamily {
+    'Solaris': {
+      $admin_owner = 'root'
+      $admin_group = 'bin'
+      $admin_path  = '/usr/bin/rabbitmqadmin'
+    }
+    default: {
+      $admin_owner = 'root'
+      $admin_group = '0'
+      $admin_path  = '/usr/local/bin/rabbitmqadmin'
     }
   }
 
