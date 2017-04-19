@@ -1,3 +1,7 @@
+#######################################################################
+# Oracle has modified the originally distributed contents of this file.
+#######################################################################
+
 #
 class rabbitmq::install::rabbitmqadmin {
 
@@ -25,9 +29,9 @@ class rabbitmq::install::rabbitmqadmin {
     ],
   }
 
-  file { '/usr/local/bin/rabbitmqadmin':
+  file { '/usr/bin/rabbitmqadmin':
     owner   => 'root',
-    group   => '0',
+    group   => 'bin',
     source  => "${rabbitmq::rabbitmq_home}/rabbitmqadmin",
     mode    => '0755',
     require => Staging::File['rabbitmqadmin'],
