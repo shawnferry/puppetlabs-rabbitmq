@@ -1,7 +1,3 @@
-#######################################################################
-# Oracle has modified the originally distributed contents of this file.
-#######################################################################
-
 # Main rabbitmq class
 class rabbitmq(
   $admin_enable               = $rabbitmq::params::admin_enable,
@@ -304,15 +300,25 @@ class rabbitmq(
   anchor { 'rabbitmq::begin': }
   anchor { 'rabbitmq::end': }
 
-  file { 'cookie_owner':
-    path => '/var/lib/rabbitmq/.erlang.cookie',
-    owner => 'rabbitmq',
-    group => 'daemon',
-  }
+  case $::osfamily {
+    'Solaris': {
+      file { 'cookie_owner':
+        path  => '/var/lib/rabbitmq/.erlang.cookie',
+        owner => 'rabbitmq',
+        group => 'daemon',
+      }
 
-  Anchor['rabbitmq::begin'] -> Class['::rabbitmq::install'] -> File['cookie_owner']
-    -> Class['::rabbitmq::config'] ~> Class['::rabbitmq::service']
-    -> Class['::rabbitmq::management'] -> Anchor['rabbitmq::end']
+      Anchor['rabbitmq::begin'] -> Class['::rabbitmq::install']
+        -> File['cookie_owner']
+        -> Class['::rabbitmq::config'] ~> Class['::rabbitmq::service']
+        -> Class['::rabbitmq::management'] -> Anchor['rabbitmq::end']
+    }
+    default: {
+      Anchor['rabbitmq::begin'] -> Class['::rabbitmq::install']
+        -> Class['::rabbitmq::config'] ~> Class['::rabbitmq::service']
+        -> Class['::rabbitmq::management'] -> Anchor['rabbitmq::end']
+    }
+  }
 
   # Make sure the various providers have their requirements in place.
   Class['::rabbitmq::install'] -> Rabbitmq_plugin<| |>

@@ -1,19 +1,15 @@
-#######################################################################
-# Oracle has modified the originally distributed contents of this file.
-#######################################################################
-
 require 'json'
 require 'puppet'
 Puppet::Type.type(:rabbitmq_binding).provide(:rabbitmqadmin) do
 
   if Puppet::PUPPETVERSION.to_f < 3
     commands :rabbitmqctl   => 'rabbitmqctl'
-    commands :rabbitmqadmin => '/usr/bin/rabbitmqadmin'
+    commands :rabbitmqadmin => $rabbbitmq::admin_path
   else
     has_command(:rabbitmqctl, 'rabbitmqctl') do
       environment :HOME => "/tmp"
     end
-    has_command(:rabbitmqadmin, '/usr/bin/rabbitmqadmin') do
+    has_command(:rabbitmqadmin, $rabbbitmq::admin_path) do
       environment :HOME => "/tmp"
     end
   end
@@ -89,7 +85,8 @@ Puppet::Type.type(:rabbitmq_binding).provide(:rabbitmqadmin) do
     if arguments.nil?
       arguments = {}
     end
-    rabbitmqadmin('declare',
+    rabbitmqadmin(
+      'declare',
       'binding',
       vhost_opt,
       "--user=#{resource[:user]}",

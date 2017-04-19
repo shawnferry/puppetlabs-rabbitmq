@@ -1,8 +1,3 @@
-#######################################################################
-# Oracle has modified the originally distributed contents of this file.
-#######################################################################
-
-#
 class rabbitmq::install::rabbitmqadmin {
 
   if($rabbitmq::ssl and $rabbitmq::management_ssl) {
@@ -41,9 +36,9 @@ class rabbitmq::install::rabbitmqadmin {
     ],
   }
 
-  file { '/usr/bin/rabbitmqadmin':
-    owner   => 'root',
-    group   => 'bin',
+  file { $rabbbitmq::admin_path:
+    owner   => $rabbbitmq::admin_owner,
+    group   => $rabbbitmq::admin_group,
     source  => "${rabbitmq::rabbitmq_home}/rabbitmqadmin",
     mode    => '0755',
     require => Staging::File['rabbitmqadmin'],

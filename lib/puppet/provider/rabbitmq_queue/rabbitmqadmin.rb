@@ -1,19 +1,15 @@
-#######################################################################
-# Oracle has modified the originally distributed contents of this file.
-#######################################################################
-
 require 'json'
 require 'puppet'
 Puppet::Type.type(:rabbitmq_queue).provide(:rabbitmqadmin) do
 
   if Puppet::PUPPETVERSION.to_f < 3
     commands :rabbitmqctl   => 'rabbitmqctl'
-    commands :rabbitmqadmin => '/usr/bin/rabbitmqadmin'
+    commands :rabbitmqadmin => $rabbbitmq::admin_path
   else
     has_command(:rabbitmqctl, 'rabbitmqctl') do
       environment :HOME => "/tmp"
     end
-    has_command(:rabbitmqadmin, '/usr/bin/rabbitmqadmin') do
+    has_command(:rabbitmqadmin, $rabbbitmq::admin_path) do
       environment :HOME => "/tmp"
     end
   end
@@ -44,7 +40,7 @@ Puppet::Type.type(:rabbitmq_queue).provide(:rabbitmqadmin) do
     all_vhosts.each do |vhost|
       all_queues(vhost).collect do |line|
         next if line =~ /^federation:/
-        name, durable, auto_delete, arguments = line.split()
+        name, durable, auto_delete, arguments = line.split
         # Convert output of arguments from the rabbitmqctl command to a json string.
         if !arguments.nil?
           arguments = arguments.gsub(/^\[(.*)\]$/, "").gsub(/\{("(?:.|\\")*?"),/, '{\1:').gsub(/\},\{/, ",")
@@ -87,7 +83,8 @@ Puppet::Type.type(:rabbitmq_queue).provide(:rabbitmqadmin) do
     if arguments.nil?
       arguments = {}
     end
-    rabbitmqadmin('declare',
+    rabbitmqadmin(
+      'declare',
       'queue',
       vhost_opt,
       "--user=#{resource[:user]}",

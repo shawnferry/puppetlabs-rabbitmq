@@ -1,5 +1,3 @@
-NOTE: Oracle has modified the originally distributed contents of metadata.json.
-
 # rabbitmq
 
 #### Table of Contents

@@ -1,8 +1,4 @@
-#######################################################################
-# Oracle has modified the originally distributed contents of this file.
-#######################################################################
-
-  # Class: rabbitmq::params
+# Class: rabbitmq::params
 #
 #   The RabbitMQ Module configuration settings.
 #
@@ -77,6 +73,19 @@ class rabbitmq::params {
     }
     default: {
       fail("The ${module_name} module is not supported on an ${::osfamily} based system.")
+    }
+  }
+
+  case $::osfamily {
+    'Solaris': {
+      $admin_owner = 'root'
+      $admin_group = 'bin'
+      $admin_path  = '/usr/bin/rabbitmqadmin'
+    }
+    default: {
+      $admin_owner = 'root'
+      $admin_group = '0'
+      $admin_path  = '/usr/local/bin/rabbitmqadmin'
     }
   }
 

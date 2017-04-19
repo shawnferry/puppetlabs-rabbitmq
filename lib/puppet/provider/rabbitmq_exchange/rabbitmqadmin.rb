@@ -1,19 +1,15 @@
-#######################################################################
-# Oracle has modified the originally distributed contents of this file.
-#######################################################################
-
 require 'puppet'
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'rabbitmqctl'))
 Puppet::Type.type(:rabbitmq_exchange).provide(:rabbitmqadmin, :parent => Puppet::Provider::Rabbitmqctl) do
 
   if Puppet::PUPPETVERSION.to_f < 3
     commands :rabbitmqctl   => 'rabbitmqctl'
-    commands :rabbitmqadmin => '/usr/bin/rabbitmqadmin'
+    commands :rabbitmqadmin => $rabbbitmq::admin_path
   else
     has_command(:rabbitmqctl, 'rabbitmqctl') do
       environment :HOME => "/tmp"
     end
-    has_command(:rabbitmqadmin, '/usr/bin/rabbitmqadmin') do
+    has_command(:rabbitmqadmin, $rabbbitmq::admin_path) do
       environment :HOME => "/tmp"
     end
   end
@@ -52,7 +48,7 @@ Puppet::Type.type(:rabbitmq_exchange).provide(:rabbitmqadmin, :parent => Puppet:
     resources = []
     all_vhosts.each do |vhost|
         all_exchanges(vhost).each do |line|
-            name, type, internal, durable, auto_delete, arguments = line.split()
+            name, type, internal, durable, auto_delete, arguments = line.split
             if type.nil?
                 # if name is empty, it will wrongly get the type's value.
                 # This way type will get the correct value
